@@ -2,6 +2,8 @@ const DB_NAME = "ControleFinanceiroDB";
 const DB_VERSION = 1;
 const OLD_STORAGE_KEY = "controleFinanceiroDataV1";
 const STORE_NAMES = ["bills", "debts", "incomes", "expenses"];
+const API_BASE_URL = (window.CONTROLE_FINANCEIRO_API_URL || "").replace(/\/$/, "");
+let useApi = Boolean(API_BASE_URL);
 
 const sampleData = {
   bills: [
@@ -113,8 +115,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   bindNavigation();
   bindForms();
   bindActions();
-  db = await openDatabase();
-  state = await loadState();
+
+  try {
+    if (!useApi) {
+      db = await openDatabase();
+    }
+
+    state = await loadState();
+  } catch (error) {
+    console.warn("API indisponivel. Usando banco local do navegador.", error);
+    useApi = false;
+    db = await openDatabase();
+    state = await loadState();
+  }
+
   renderAll();
 });
 
@@ -152,6 +166,17 @@ function openDatabase() {
 }
 
 async function loadState() {
+  if (useApi) {
+    const apiState = await loadStateFromApi();
+
+    if (hasRecords(apiState)) {
+      return apiState;
+    }
+
+    await saveState(cloneData(sampleData));
+    return cloneData(sampleData);
+  }
+
   const loadedState = createEmptyState();
 
   for (const storeName of STORE_NAMES) {
@@ -199,8 +224,44 @@ function cloneData(data) {
 }
 
 async function saveState(data = state) {
+  if (useApi) {
+    await saveStateToApi(data);
+    return;
+  }
+
   for (const storeName of STORE_NAMES) {
     await replaceStoreRecords(storeName, data[storeName]);
+  }
+}
+
+async function loadStateFromApi() {
+  const response = await fetch(`${API_BASE_URL}/api/data`);
+
+  if (!response.ok) {
+    throw new Error("Nao foi possivel carregar os dados da API.");
+  }
+
+  const data = await response.json();
+
+  return {
+    bills: data.bills || [],
+    debts: data.debts || [],
+    incomes: data.incomes || [],
+    expenses: data.expenses || []
+  };
+}
+
+async function saveStateToApi(data) {
+  const response = await fetch(`${API_BASE_URL}/api/data`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+
+  if (!response.ok) {
+    throw new Error("Nao foi possivel salvar os dados na API.");
   }
 }
 
