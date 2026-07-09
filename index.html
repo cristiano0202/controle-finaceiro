@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle Financeiro</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section id="homeScreen" class="home-screen view active">
+    <main class="home-card" aria-labelledby="homeTitle">
+      <div class="brand brand-large" aria-label="Controle Financeiro">
+        <div class="brand-icon">R$</div>
+        <div class="brand-name">Controle Financeiro</div>
+      </div>
+
+      <p class="eyebrow">Sistema financeiro sem login</p>
+      <h1 id="homeTitle">Escolha uma opção</h1>
+      <p class="home-text">Controle contas, dívidas, receitas e despesas em um painel simples.</p>
+
+      <div class="menu-grid" aria-label="Menu principal">
+        <button class="menu-card" type="button" data-page="dashboard">
+          <span>Dashboard</span>
+          <small>Resumo geral do dinheiro</small>
+        </button>
+        <button class="menu-card" type="button" data-page="bills">
+          <span>Contas a pagar</span>
+          <small>Boletos, aluguel e serviços</small>
+        </button>
+        <button class="menu-card" type="button" data-page="debts">
+          <span>Dívidas</span>
+          <small>Cartão, empréstimos e parcelas</small>
+        </button>
+        <button class="menu-card" type="button" data-page="incomes">
+          <span>Receitas</span>
+          <small>Salário, vendas e entradas</small>
+        </button>
+        <button class="menu-card" type="button" data-page="expenses">
+          <span>Despesas</span>
+          <small>Gastos do mês por categoria</small>
+        </button>
+        <button class="menu-card" type="button" data-page="reports">
+          <span>Relatórios</span>
+          <small>Gráficos e análise mensal</small>
+        </button>
+        <button class="menu-card menu-card-wide" type="button" data-page="settings">
+          <span>Configurações</span>
+          <small>Exemplos, limpeza e informações</small>
+        </button>
+      </div>
+    </main>
+  </section>
+
+  <section id="appScreen" class="app-screen view" aria-live="polite">
+    <aside class="sidebar">
+      <div class="brand brand-small">
+        <div class="brand-icon">R$</div>
+        <div class="brand-name">Controle Financeiro</div>
+      </div>
+
+      <nav class="side-nav" aria-label="Navegação do sistema">
+        <button type="button" data-page="dashboard">Dashboard</button>
+        <button type="button" data-page="bills">Contas a pagar</button>
+        <button type="button" data-page="debts">Dívidas</button>
+        <button type="button" data-page="incomes">Receitas</button>
+        <button type="button" data-page="expenses">Despesas</button>
+        <button type="button" data-page="reports">Relatórios</button>
+        <button type="button" data-page="settings">Configurações</button>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <button class="link-button" type="button" data-action="home">Voltar para início</button>
+          <h2 id="pageTitle">Dashboard</h2>
+        </div>
+        <button class="primary-action" type="button" data-page="bills">+ Nova conta</button>
+      </header>
+
+      <section id="dashboard" class="page active" data-title="Dashboard">
+        <div class="summary-grid">
+          <article class="summary-card">
+            <span>Saldo do mês</span>
+            <strong id="balanceValue">R$ 0,00</strong>
+          </article>
+          <article class="summary-card positive">
+            <span>Receitas do mês</span>
+            <strong id="incomeValue">R$ 0,00</strong>
+          </article>
+          <article class="summary-card danger">
+            <span>Despesas do mês</span>
+            <strong id="expenseValue">R$ 0,00</strong>
+          </article>
+          <article class="summary-card warning">
+            <span>Dívidas em aberto</span>
+            <strong id="debtValue">R$ 0,00</strong>
+          </article>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="panel">
+            <div class="section-heading">
+              <h3>Próximas contas</h3>
+              <button type="button" data-page="bills">Ver todas</button>
+            </div>
+            <div id="upcomingBills" class="record-list compact-list"></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-heading">
+              <h3>Dívidas em andamento</h3>
+              <button type="button" data-page="debts">Ver todas</button>
+            </div>
+            <div id="debtProgressList" class="record-list compact-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="bills" class="page" data-title="Contas a pagar">
+        <div class="form-panel">
+          <h3>Adicionar conta</h3>
+          <form id="billForm" class="data-form">
+            <label>
+              Nome da conta
+              <input name="name" type="text" placeholder="Ex: Conta de luz" required>
+            </label>
+            <label>
+              Categoria
+              <input name="category" type="text" placeholder="Ex: Moradia" required>
+            </label>
+            <label>
+              Valor
+              <input name="amount" type="number" min="0" step="0.01" placeholder="230.00" required>
+            </label>
+            <label>
+              Vencimento
+              <input name="dueDate" type="date" required>
+            </label>
+            <label>
+              Status
+              <select name="status">
+                <option>Pendente</option>
+                <option>Pago</option>
+              </select>
+            </label>
+            <button type="submit">Salvar conta</button>
+          </form>
+        </div>
+        <div id="billsList" class="record-list"></div>
+      </section>
+
+      <section id="debts" class="page" data-title="Dívidas">
+        <div class="form-panel">
+          <h3>Adicionar dívida</h3>
+          <form id="debtForm" class="data-form">
+            <label>
+              Nome da dívida
+              <input name="name" type="text" placeholder="Ex: Cartão de crédito" required>
+            </label>
+            <label>
+              Valor total
+              <input name="totalAmount" type="number" min="0" step="0.01" required>
+            </label>
+            <label>
+              Valor pago
+              <input name="paidAmount" type="number" min="0" step="0.01" required>
+            </label>
+            <label>
+              Parcelas
+              <input name="installments" type="number" min="1" step="1" value="1" required>
+            </label>
+            <label>
+              Próximo vencimento
+              <input name="nextDue" type="date" required>
+            </label>
+            <button type="submit">Salvar dívida</button>
+          </form>
+        </div>
+        <div id="debtsList" class="record-list"></div>
+      </section>
+
+      <section id="incomes" class="page" data-title="Receitas">
+        <div class="form-panel">
+          <h3>Adicionar receita</h3>
+          <form id="incomeForm" class="data-form">
+            <label>
+              Descrição
+              <input name="description" type="text" placeholder="Ex: Salário" required>
+            </label>
+            <label>
+              Categoria
+              <input name="category" type="text" placeholder="Ex: Trabalho" required>
+            </label>
+            <label>
+              Valor
+              <input name="amount" type="number" min="0" step="0.01" required>
+            </label>
+            <label>
+              Data
+              <input name="date" type="date" required>
+            </label>
+            <button type="submit">Salvar receita</button>
+          </form>
+        </div>
+        <div id="incomesList" class="record-list"></div>
+      </section>
+
+      <section id="expenses" class="page" data-title="Despesas">
+        <div class="form-panel">
+          <h3>Adicionar despesa</h3>
+          <form id="expenseForm" class="data-form">
+            <label>
+              Descrição
+              <input name="description" type="text" placeholder="Ex: Mercado" required>
+            </label>
+            <label>
+              Categoria
+              <input name="category" type="text" placeholder="Ex: Alimentação" required>
+            </label>
+            <label>
+              Valor
+              <input name="amount" type="number" min="0" step="0.01" required>
+            </label>
+            <label>
+              Data
+              <input name="date" type="date" required>
+            </label>
+            <button type="submit">Salvar despesa</button>
+          </form>
+        </div>
+        <div id="expensesList" class="record-list"></div>
+      </section>
+
+      <section id="reports" class="page" data-title="Relatórios">
+        <div class="report-grid">
+          <section class="panel">
+            <h3>Resumo do mês</h3>
+            <div id="reportSummary" class="report-summary"></div>
+          </section>
+
+          <section class="panel">
+            <h3>Despesas por categoria</h3>
+            <div id="expenseBars" class="bar-list"></div>
+          </section>
+
+          <section class="panel">
+            <h3>Receitas por categoria</h3>
+            <div id="incomeBars" class="bar-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="settings" class="page" data-title="Configurações">
+        <div class="settings-grid">
+          <section class="panel">
+            <h3>Dados do sistema</h3>
+            <p>Os dados ficam salvos no banco IndexedDB deste navegador, sem login e sem cadastro.</p>
+            <div class="settings-actions">
+              <button type="button" data-action="seed">Carregar exemplos</button>
+              <button class="danger-button" type="button" data-action="clear">Limpar tudo</button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3>Informações</h3>
+            <ul class="info-list">
+              <li>Moeda: Real brasileiro</li>
+              <li>Projeto: HTML, CSS e JavaScript separados</li>
+              <li>Banco de dados: IndexedDB no navegador</li>
+              <li>Primeira tela: logo personalizada com HTML/CSS</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
