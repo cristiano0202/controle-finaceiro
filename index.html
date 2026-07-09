@@ -24,9 +24,9 @@
 
       <div class="home-hero">
         <div class="hero-copy">
-          <p class="eyebrow">Sistema financeiro sem login</p>
-          <h1 id="homeTitle">Controle seu dinheiro com <span>clareza.</span></h1>
-          <p class="home-text">Organize contas, dívidas, receitas e despesas em um painel escuro, moderno e simples de acompanhar.</p>
+          <p class="eyebrow">Organizador financeiro pessoal</p>
+          <h1 id="homeTitle">Controle suas contas em um painel <span>simples.</span></h1>
+          <p class="home-text">Veja saldos, contas, cartões, dívidas e relatórios com uma aparência limpa, leve e parecida com aplicativos financeiros modernos.</p>
 
           <div class="menu-grid" aria-label="Menu principal">
             <button class="menu-card" type="button" data-page="dashboard">
@@ -61,17 +61,34 @@
         </div>
 
         <div class="hero-visual" aria-hidden="true">
-          <div class="orbital orbital-blue"></div>
-          <div class="orbital orbital-green"></div>
-          <div class="floating-stat">
-            <strong>22%</strong>
-            <span>economia estimada no mês</span>
+          <div class="preview-topbar">
+            <span class="preview-logo">R$</span>
+            <span>Controle Financeiro</span>
           </div>
-          <div class="mini-bars">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+          <div class="preview-dashboard">
+            <div class="preview-greeting">
+              <span>Boa tarde</span>
+              <strong>Felipe!</strong>
+            </div>
+            <div class="preview-card income">
+              <small>Receita mensal</small>
+              <strong>R$ 13.883,00</strong>
+            </div>
+            <div class="preview-card expense">
+              <small>Despesa mensal</small>
+              <strong>R$ 12.802,36</strong>
+            </div>
+            <div class="preview-panel accounts">
+              <h4>Minhas contas</h4>
+              <p><span class="dot red"></span> Conta Santander <strong>R$ 1.486,45</strong></p>
+              <p><span class="dot blue"></span> Conta Econômica <strong>R$ 5.468,99</strong></p>
+              <p><span class="dot orange"></span> Conta Inter <strong>R$ 3.645,00</strong></p>
+            </div>
+            <div class="preview-panel cards">
+              <h4>Meus cartões</h4>
+              <p><span class="card-icon orange"></span> Inter <strong>Ver fatura</strong></p>
+              <p><span class="card-icon purple"></span> Nubank <strong>Ver fatura</strong></p>
+            </div>
           </div>
         </div>
       </div>
@@ -303,6 +320,7 @@
     </main>
   </section>
 
+  <script src="js/config.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
