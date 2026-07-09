@@ -112,6 +112,7 @@ const pageTitles = {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
+  bindAutoLayout();
   bindNavigation();
   bindForms();
   bindActions();
@@ -131,6 +132,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   renderAll();
 });
+
+function bindAutoLayout() {
+  const applyLayout = () => {
+    const width = window.innerWidth;
+    const layout = width <= 720 ? "mobile" : width <= 1050 ? "tablet" : "desktop";
+
+    document.documentElement.dataset.layout = layout;
+    document.documentElement.style.setProperty("--viewport-height", `${window.innerHeight}px`);
+  };
+
+  applyLayout();
+  window.addEventListener("resize", applyLayout);
+  window.addEventListener("orientationchange", applyLayout);
+}
 
 function createEmptyState() {
   return {
