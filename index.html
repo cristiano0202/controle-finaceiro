@@ -9,44 +9,71 @@
 <body>
   <section id="homeScreen" class="home-screen view active">
     <main class="home-card" aria-labelledby="homeTitle">
-      <div class="brand brand-large" aria-label="Controle Financeiro">
-        <div class="brand-icon">R$</div>
-        <div class="brand-name">Controle Financeiro</div>
-      </div>
+      <header class="hero-header">
+        <div class="brand brand-large" aria-label="Controle Financeiro">
+          <div class="brand-icon">R$</div>
+          <div class="brand-name">Controle Financeiro</div>
+        </div>
 
-      <p class="eyebrow">Sistema financeiro sem login</p>
-      <h1 id="homeTitle">Escolha uma opção</h1>
-      <p class="home-text">Controle contas, dívidas, receitas e despesas em um painel simples.</p>
+        <div class="hero-tabs" aria-label="Atalhos principais">
+          <button type="button" data-page="dashboard">Dashboard</button>
+          <button type="button" data-page="bills">Contas</button>
+          <button class="active" type="button" data-page="reports">Relatórios</button>
+        </div>
+      </header>
 
-      <div class="menu-grid" aria-label="Menu principal">
-        <button class="menu-card" type="button" data-page="dashboard">
-          <span>Dashboard</span>
-          <small>Resumo geral do dinheiro</small>
-        </button>
-        <button class="menu-card" type="button" data-page="bills">
-          <span>Contas a pagar</span>
-          <small>Boletos, aluguel e serviços</small>
-        </button>
-        <button class="menu-card" type="button" data-page="debts">
-          <span>Dívidas</span>
-          <small>Cartão, empréstimos e parcelas</small>
-        </button>
-        <button class="menu-card" type="button" data-page="incomes">
-          <span>Receitas</span>
-          <small>Salário, vendas e entradas</small>
-        </button>
-        <button class="menu-card" type="button" data-page="expenses">
-          <span>Despesas</span>
-          <small>Gastos do mês por categoria</small>
-        </button>
-        <button class="menu-card" type="button" data-page="reports">
-          <span>Relatórios</span>
-          <small>Gráficos e análise mensal</small>
-        </button>
-        <button class="menu-card menu-card-wide" type="button" data-page="settings">
-          <span>Configurações</span>
-          <small>Exemplos, limpeza e informações</small>
-        </button>
+      <div class="home-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Sistema financeiro sem login</p>
+          <h1 id="homeTitle">Controle seu dinheiro com <span>clareza.</span></h1>
+          <p class="home-text">Organize contas, dívidas, receitas e despesas em um painel escuro, moderno e simples de acompanhar.</p>
+
+          <div class="menu-grid" aria-label="Menu principal">
+            <button class="menu-card" type="button" data-page="dashboard">
+              <span>Dashboard</span>
+              <small>Resumo geral do dinheiro</small>
+            </button>
+            <button class="menu-card" type="button" data-page="bills">
+              <span>Contas a pagar</span>
+              <small>Boletos, aluguel e serviços</small>
+            </button>
+            <button class="menu-card" type="button" data-page="debts">
+              <span>Dívidas</span>
+              <small>Cartão, empréstimos e parcelas</small>
+            </button>
+            <button class="menu-card" type="button" data-page="incomes">
+              <span>Receitas</span>
+              <small>Salário, vendas e entradas</small>
+            </button>
+            <button class="menu-card" type="button" data-page="expenses">
+              <span>Despesas</span>
+              <small>Gastos do mês por categoria</small>
+            </button>
+            <button class="menu-card" type="button" data-page="reports">
+              <span>Relatórios</span>
+              <small>Gráficos e análise mensal</small>
+            </button>
+            <button class="menu-card menu-card-wide" type="button" data-page="settings">
+              <span>Configurações</span>
+              <small>Exemplos, limpeza e informações</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orbital orbital-blue"></div>
+          <div class="orbital orbital-green"></div>
+          <div class="floating-stat">
+            <strong>22%</strong>
+            <span>economia estimada no mês</span>
+          </div>
+          <div class="mini-bars">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
       </div>
     </main>
   </section>
