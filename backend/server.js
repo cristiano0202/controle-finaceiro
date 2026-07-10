@@ -13,22 +13,35 @@ app.use(express.json({ limit: "1mb" }));
 const tables = ["bills", "debts", "incomes", "expenses"];
 
 const pool = mysql.createPool(getDatabaseConfig());
+let databaseInitialized = false;
 
 function getDatabaseConfig() {
-  if (process.env.MYSQL_URL) {
+  const databaseUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
+
+  if (databaseUrl) {
+    const url = new URL(databaseUrl);
+
     return {
-      uri: process.env.MYSQL_URL,
+      host: url.hostname,
+      port: Number(url.port || 3306),
+      user: decodeURIComponent(url.username),
+      password: decodeURIComponent(url.password),
+      database: url.pathname.replace("/", ""),
       waitForConnections: true,
       connectionLimit: 10
     };
   }
 
+  const password = process.env.MYSQLPASSWORD || process.env.MYSQL_ROOT_PASSWORD;
+  const user = process.env.MYSQLUSER || process.env.MYSQL_USER || "root";
+  const database = process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE || "railway";
+
   return {
     host: process.env.MYSQLHOST,
     port: Number(process.env.MYSQLPORT || 3306),
-    user: process.env.MYSQLUSER,
-    password: process.env.MYSQLPASSWORD,
-    database: process.env.MYSQLDATABASE,
+    user,
+    password,
+    database,
     waitForConnections: true,
     connectionLimit: 10
   };
@@ -77,36 +90,60 @@ async function initializeDatabase() {
       date DATE NOT NULL
     )
   `);
+
+  databaseInitialized = true;
+}
+
+async function ensureDatabase() {
+  if (!databaseInitialized) {
+    await initializeDatabase();
+  }
 }
 
 app.get("/api/health", async (request, response) => {
   try {
-    await pool.query("SELECT 1");
+    await ensureDatabase();
     response.json({ ok: true, database: "online" });
   } catch (error) {
-    response.status(500).json({ ok: false, error: "database_offline" });
+    response.status(500).json({
+      ok: false,
+      error: "database_offline",
+      code: error.code || "UNKNOWN_DATABASE_ERROR"
+    });
   }
 });
 
 app.get("/api/data", async (request, response) => {
-  const [bills] = await pool.query("SELECT id, name, category, amount, DATE_FORMAT(dueDate, '%Y-%m-%d') AS dueDate, status FROM bills ORDER BY dueDate");
-  const [debts] = await pool.query("SELECT id, name, totalAmount, paidAmount, installments, DATE_FORMAT(nextDue, '%Y-%m-%d') AS nextDue, status FROM debts ORDER BY nextDue");
-  const [incomes] = await pool.query("SELECT id, description, category, amount, DATE_FORMAT(date, '%Y-%m-%d') AS date FROM incomes ORDER BY date DESC");
-  const [expenses] = await pool.query("SELECT id, description, category, amount, DATE_FORMAT(date, '%Y-%m-%d') AS date FROM expenses ORDER BY date DESC");
+  try {
+    await ensureDatabase();
 
-  response.json({
-    bills: normalizeNumbers(bills),
-    debts: normalizeNumbers(debts),
-    incomes: normalizeNumbers(incomes),
-    expenses: normalizeNumbers(expenses)
-  });
+    const [bills] = await pool.query("SELECT id, name, category, amount, DATE_FORMAT(dueDate, '%Y-%m-%d') AS dueDate, status FROM bills ORDER BY dueDate");
+    const [debts] = await pool.query("SELECT id, name, totalAmount, paidAmount, installments, DATE_FORMAT(nextDue, '%Y-%m-%d') AS nextDue, status FROM debts ORDER BY nextDue");
+    const [incomes] = await pool.query("SELECT id, description, category, amount, DATE_FORMAT(date, '%Y-%m-%d') AS date FROM incomes ORDER BY date DESC");
+    const [expenses] = await pool.query("SELECT id, description, category, amount, DATE_FORMAT(date, '%Y-%m-%d') AS date FROM expenses ORDER BY date DESC");
+
+    response.json({
+      bills: normalizeNumbers(bills),
+      debts: normalizeNumbers(debts),
+      incomes: normalizeNumbers(incomes),
+      expenses: normalizeNumbers(expenses)
+    });
+  } catch (error) {
+    response.status(500).json({
+      ok: false,
+      error: "load_failed",
+      code: error.code || "UNKNOWN_DATABASE_ERROR"
+    });
+  }
 });
 
 app.put("/api/data", async (request, response) => {
   const data = sanitizePayload(request.body);
-  const connection = await pool.getConnection();
+  let connection;
 
   try {
+    await ensureDatabase();
+    connection = await pool.getConnection();
     await connection.beginTransaction();
 
     for (const table of tables) {
@@ -144,10 +181,19 @@ app.put("/api/data", async (request, response) => {
     await connection.commit();
     response.json({ ok: true });
   } catch (error) {
-    await connection.rollback();
-    response.status(500).json({ ok: false, error: "save_failed" });
+    if (connection) {
+      await connection.rollback();
+    }
+
+    response.status(500).json({
+      ok: false,
+      error: "save_failed",
+      code: error.code || "UNKNOWN_DATABASE_ERROR"
+    });
   } finally {
-    connection.release();
+    if (connection) {
+      connection.release();
+    }
   }
 });
 
@@ -174,13 +220,17 @@ function normalizeNumbers(records) {
   });
 }
 
-initializeDatabase()
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`API online na porta ${port}`);
+app.listen(port, () => {
+  console.log(`API online na porta ${port}`);
+
+  initializeDatabase()
+    .then(() => {
+      console.log("Banco de dados online.");
+    })
+    .catch((error) => {
+      console.error("Banco de dados indisponivel:", {
+        code: error.code,
+        message: error.message
+      });
     });
-  })
-  .catch((error) => {
-    console.error("Erro ao iniciar banco de dados:", error);
-    process.exit(1);
-  });
+});
