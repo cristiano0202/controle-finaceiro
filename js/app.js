@@ -102,7 +102,7 @@ const currency = new Intl.NumberFormat("pt-BR", {
 });
 
 const pageTitles = {
-  dashboard: "Dashboard",
+  Início: "Início",
   bills: "Contas a pagar",
   debts: "Dívidas",
   incomes: "Receitas",
