@@ -47,6 +47,15 @@ function getDatabaseConfig() {
   };
 }
 
+app.get("/", (request, response) => {
+  response.json({
+    ok: true,
+    service: "Controle Financeiro API",
+    health: "/api/health",
+    data: "/api/data"
+  });
+});
+
 async function initializeDatabase() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS bills (
